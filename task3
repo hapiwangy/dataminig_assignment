@@ -1,0 +1,25 @@
+# 在信心水準為95%的情況之下進行推論
+# 建立假設
+# H0 : 兩種sprays之間的效果沒有差異
+# H1 : 兩種sprays之間的效果有差異
+# 檢定方法選擇:雙樣本T檢定，適用於比較兩個獨立樣本的平均值
+# 加載資料集
+data("InsectSprays")
+
+# 將資料分為噴劑 A 和噴劑 B 的兩組
+spray_A <- InsectSprays$count[InsectSprays$spray == "A"]
+spray_B <- InsectSprays$count[InsectSprays$spray == "B"]
+# 設定alpha
+alpha <- 0.05
+# 執行 t 檢定
+t_test_result <- t.test(spray_A, spray_B)
+
+# 顯示檢定結果
+print(t_test_result)
+
+
+if (t_test_result$p.value < alpha){
+  print("不接受虛無假設，兩者之間有差異")
+} else{
+  print("接受虛無假設，兩者之間並沒有差異")
+}
