@@ -68,6 +68,4 @@ abline(v = conf_interval, col = "red", lwd = 2)
 # Print confidence interval
 cat("95% Confidence Interval:", conf_interval, "\n")
 
-# Analyze significance
-p_value <- mean(boot_means >= 0) # probability of observing mean difference >= 0
-cat("p-value:", p_value, "\n")
+
