@@ -1,0 +1,73 @@
+1-2
+# 載入必要的套件
+library(boot)
+
+# 載入 Iris 資料集
+data(iris)
+
+# 提取 Iris setosa 的資料
+setosa_data <- iris[iris$Species == "setosa", ]
+
+# 函數：計算平均萼片長度
+mean_sepal_length <- function(data, indices) {
+  return(mean(data$Sepal.Length[indices]))
+}
+
+# 自助法重抽樣
+set.seed(123) # 設置種子以確保結果的可重現性
+# 第一個參數代表要從哪裡抽樣
+# 第二個參數代表要對抽樣的資訊進行什麼樣的操作(計算平均)
+bootstrap_results <- boot(setosa_data, mean_sepal_length, R = 1000)
+
+# 可視化自助法平均值的分佈
+hist(bootstrap_results$t, breaks = 30, col = "skyblue", border = "black",
+     main = "Distribution of Bootstrap Means for Sepal Length of Iris setosa",
+     xlab = "Mean Sepal Length",
+     ylab = "Frequency")
+
+# 計算95%信心區間 (抽樣平均的95%的區間會包含在)
+conf_interval <- quantile(bootstrap_results$t, c(0.025, 0.975))
+conf_interval
+
+1-3
+
+# Load necessary library
+library(datasets)
+
+# Load iris dataset
+data("iris")
+
+# Subset data for Iris versicolor and Iris virginica
+versicolor <- iris$Petal.Length[iris$Species == "versicolor"]
+virginica <- iris$Petal.Length[iris$Species == "virginica"]
+
+# Define a function for bootstrapping
+bootstrap_mean_diff <- function(x1, x2, resamples = 2000) {
+    mean_diff <- numeric(resamples)
+    for (i in 1:resamples) {
+        sample1 <- sample(x1, replace = TRUE)
+        sample2 <- sample(x2, replace = TRUE)
+        mean_diff[i] <- mean(sample1) - mean(sample2)
+    }
+    return(mean_diff)
+}
+
+# Perform bootstrap resampling
+set.seed(123) # For reproducibility
+boot_means <- bootstrap_mean_diff(versicolor, virginica)
+
+# Calculate 95% confidence interval
+conf_interval <- quantile(boot_means, c(0.025, 0.975))
+
+# Visualize the distribution of mean differences
+hist(boot_means, main = "Distribution of Mean Differences",
+     xlab = "Mean Difference (versicolor - virginica)",
+     ylab = "Frequency", col = "lightblue")
+abline(v = conf_interval, col = "red", lwd = 2)
+
+# Print confidence interval
+cat("95% Confidence Interval:", conf_interval, "\n")
+
+# Analyze significance
+p_value <- mean(boot_means >= 0) # probability of observing mean difference >= 0
+cat("p-value:", p_value, "\n")
