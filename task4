@@ -1,0 +1,41 @@
+# 在信心水準為95%的情況之下進行推論
+# 建立假設
+# H0 : 飲食1對於小雞的體重沒有影響
+# H1 : 飲食1對於小雞的體重有影響
+# 設定alpha值
+alpha <- 0.05
+# 1. 加載必要的套件
+library(datasets)
+library(stats)
+
+# 2. 讀取資料
+data("ChickWeight")
+chick_data <- ChickWeight[ChickWeight$Diet == 1, ]  # 選擇餵食1的小雞數據
+
+# 3. 假设检验
+# 找出0天和21天都有數據的小雞
+complete_chicks <- intersect(chick_data$Chick[chick_data$Time == 0], chick_data$Chick[chick_data$Time == 21])
+
+# 選擇這些小雞的數據
+paired_data <- chick_data[chick_data$Chick %in% complete_chicks, ]
+
+# 按小雞和時間點進行排序，以便配對
+paired_data <- paired_data[order(paired_data$Chick, paired_data$Time), ]
+
+# 將0天的體重視為初始值，21天的體重視為結束值
+initial_weight <- paired_data$weight[paired_data$Time == 0]
+final_weight <- paired_data$weight[paired_data$Time == 21]
+
+# 進行配對的 t 檢驗
+result <- t.test(final_weight, initial_weight, paired = TRUE)
+
+print(result)
+
+# 4. 解釋結果
+
+if(result$p.value < alpha){
+  print("不接受虛無假設 飲食1對於小雞的體重有影響")
+}else{
+  print("接受虛無假設 飲食1對於小雞的體重沒有影響")  
+}
+
