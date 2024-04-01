@@ -1,0 +1,43 @@
+# 建立假設
+# H0是假設vitamin C 的生長結果沒有不同
+# H1 是假設vitamin C的生長ˇ的生長ˇ有不同
+# 在95%信心水準下進行推論
+# 設定假設值
+alpha <- 0.05
+# 設定標準生長值
+standard_growth <- 18.5
+# 進行t-檢定
+t_result <- t.test(ToothGrowth$len, mu=standard_growth)
+# 顯示結果
+cat("t_test result: ")
+print(t_result)
+# 進行推論決定
+if (t_result$p.value < alpha) {
+  print("不接受虛無假設，有足夠證據支持 Vitamin C 的平均牙齒生長與標準生長水平不同。")
+} else {
+  print("無法拒絕虛無假設，沒有足夠證據支持 Vitamin C 的平均牙齒生長與標準生長水平不同。")
+}
+
+# 進行z-檢定
+n <- length(ToothGrowth$len)
+
+# 母體標準差
+sigma <- sd(ToothGrowth$len)
+
+# 進行z-檢定
+z_score <- (mean(ToothGrowth$len) - standard_growth) / (sigma / sqrt(n))
+
+# z檢定的p值
+p_value_z <- 2 * (1 - pnorm(abs(z_score)))
+# 印出結果
+print("\nz 檢定結果：")
+# 印出p-value
+print(paste("p-value:", p_value_z))
+# 確認檢定結果
+
+if (p_value_z < alpha) {
+    print("不接受虛無假設，有足夠證據支持 Vitamin C 的平均牙齒生長與標準生長水平不同。")
+} else {
+    print("無法拒絕虛無假設，沒有足夠證據支持 Vitamin C 的平均牙齒生長與標準生長水平不同。")
+}
+
